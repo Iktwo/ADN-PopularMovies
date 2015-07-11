@@ -1,13 +1,12 @@
 package com.iktwo.popularmovies;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -17,78 +16,32 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DiscoverFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DiscoverFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DiscoverFragment extends Fragment implements HttpAsyncRequest.AsyncResponse {
     private static final String TAG = DiscoverFragment.class.getSimpleName();
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private DiscoverAdapter discoverAdapter;
 
-    private OnFragmentInteractionListener mListener;
+    private OnMovieSelectedListener mListener;
 
     private GridView gridView;
     private ProgressBar busyIndicator;
 
     public DiscoverFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DiscoverFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DiscoverFragment newInstance(String param1, String param2) {
-        DiscoverFragment fragment = new DiscoverFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void processFinish(ArrayList<String> reply) {
-        Log.d(TAG, "processFinish");
-        Log.d(TAG, "Is null?" + Boolean.toString(reply == null));
-
-        if (!reply.isEmpty() && reply.get(0).equals(Urls.DISCOVER_URL)) {
-            Log.d(TAG, "???? " + DiscoverResultsMovies.class);
+        if (reply != null && !reply.isEmpty() && reply.get(0).equals(Urls.DISCOVER_URL)) {
             final DiscoverResultsMovies discoverResults = new Gson().fromJson(reply.get(1), DiscoverResultsMovies.class);
 
             discoverAdapter = new DiscoverAdapter(getActivity(), discoverResults.results);
-            Log.d(TAG, "discoverAdapter size:" + Integer.toString(discoverResults.results.size()));
-
-            Log.d(TAG, "getCount?" + Integer.toString(discoverAdapter.getCount()));
 
             gridView.setAdapter(discoverAdapter);
 
             busyIndicator.setVisibility(View.GONE);
-
-            // for (int i = 0; i < discoverResults.results.size(); i++) {
-            //    Log.d(TAG, "Reply: " + discoverResults.results.get(i).title);
-            // }
         } else {
             busyIndicator.setVisibility(View.GONE);
+
             Toast.makeText(getActivity(),
                     R.string.error_getting_movies,
                     Toast.LENGTH_LONG).show();
@@ -101,11 +54,6 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
 
         if (discoverAdapter == null)
             new HttpAsyncRequest(this).execute(Urls.DISCOVER_URL);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         setRetainInstance(true);
     }
@@ -124,14 +72,19 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
             busyIndicator.setVisibility(View.GONE);
         }
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMovie((DiscoverResultMovie) gridView.getAdapter().getItem(i));
+            }
+        });
 
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void selectedMovie(DiscoverResultMovie movie) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onMovieSelected(movie);
         }
     }
 
@@ -139,7 +92,7 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnMovieSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -152,19 +105,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public interface OnMovieSelectedListener {
+        public void onMovieSelected(DiscoverResultMovie movie);
     }
 
     private class DiscoverResultsMovies {

@@ -21,10 +21,10 @@
         <activity
             android:name=".DetailsActivity"
             android:label="@string/title_activity_details"></activity>
-    </application>
 
-    <meta-data
-        android:name="com.iktwo.popularmovies.GlideConfiguration"
-        android:value="GlideModule" />
+        <meta-data
+            android:name="com.iktwo.popularmovies.GlideConfiguration"
+            android:value="GlideModule" />
+    </application>
 
 </manifest>

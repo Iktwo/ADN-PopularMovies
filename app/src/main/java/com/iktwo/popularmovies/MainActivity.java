@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements DiscoverFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements DiscoverFragment.OnMovieSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements DiscoverFragment.
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onMovieSelected(DiscoverResultMovie movie) {
+        Toast.makeText(this,
+                movie.title,
+                Toast.LENGTH_LONG).show();
     }
 }
