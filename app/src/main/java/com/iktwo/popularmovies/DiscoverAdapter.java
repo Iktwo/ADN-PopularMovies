@@ -15,8 +15,8 @@ import java.util.List;
 public class DiscoverAdapter extends ArrayAdapter<DiscoverResultMovie> {
     private static final String TAG = DiscoverAdapter.class.getSimpleName();
 
-    public DiscoverAdapter(Activity context, List<DiscoverResultMovie> songs) {
-        super(context, 0, songs);
+    public DiscoverAdapter(Activity context, List<DiscoverResultMovie> movies) {
+        super(context, 0, movies);
     }
 
     @Override
