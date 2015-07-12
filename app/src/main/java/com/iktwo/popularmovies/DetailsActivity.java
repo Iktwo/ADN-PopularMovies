@@ -1,16 +1,33 @@
 package com.iktwo.popularmovies;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements DetailsFragment.OnFragmentInteractionListener {
+    private static final String TAG = DetailsActivity.class.getSimpleName();
+    private DiscoverResultMovie mMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (getIntent() != null) {
+            mMovie = getIntent().getParcelableExtra("MOVIE");
+            Log.d(TAG, mMovie.title);
+        }
     }
 
     @Override
@@ -33,5 +50,10 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
