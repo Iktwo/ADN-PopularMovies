@@ -26,6 +26,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
     private GridView gridView;
     private ProgressBar busyIndicator;
 
+    private List<DiscoverResultMovie> mMovies;
+
     public DiscoverFragment() {
     }
 
@@ -34,9 +36,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
         if (reply != null && !reply.isEmpty() && reply.get(0).equals(Urls.DISCOVER_URL)) {
             final DiscoverResultsMovies discoverResults = new Gson().fromJson(reply.get(1), DiscoverResultsMovies.class);
 
-            discoverAdapter = new DiscoverAdapter(getActivity(), discoverResults.results);
-
-            gridView.setAdapter(discoverAdapter);
+            mMovies = discoverResults.results;
+            gridView.setAdapter(new DiscoverAdapter(getActivity(), mMovies));
 
             busyIndicator.setVisibility(View.GONE);
         } else {
@@ -52,7 +53,7 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (discoverAdapter == null)
+        if (mMovies == null)
             new HttpAsyncRequest(this).execute(Urls.DISCOVER_URL);
 
         setRetainInstance(true);
@@ -67,8 +68,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
 
         busyIndicator = (ProgressBar) view.findViewById(R.id.busy_indicator);
 
-        if (discoverAdapter != null) {
-            gridView.setAdapter(discoverAdapter);
+        if (mMovies != null) {
+            gridView.setAdapter(new DiscoverAdapter(getActivity(), mMovies));
             busyIndicator.setVisibility(View.GONE);
         }
 
