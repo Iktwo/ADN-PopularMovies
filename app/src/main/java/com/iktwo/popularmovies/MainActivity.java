@@ -1,14 +1,15 @@
 package com.iktwo.popularmovies;
 
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements DiscoverFragment.OnMovieSelectedListener {
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +18,12 @@ public class MainActivity extends AppCompatActivity implements DiscoverFragment.
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (findViewById(R.id.frame_layout_details) != null) {
+            mTwoPane = true;
+
+        }
+    }
     }
 
     @Override
@@ -43,8 +50,14 @@ public class MainActivity extends AppCompatActivity implements DiscoverFragment.
 
     @Override
     public void onMovieSelected(DiscoverResultMovie movie) {
-        Toast.makeText(this,
-                movie.title,
-                Toast.LENGTH_LONG).show();
+        if (mTwoPane) {
+            Toast.makeText(this,
+                    movie.title,
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra("MOVIE", movie);
+            startActivity(intent);
+        }
     }
 }
