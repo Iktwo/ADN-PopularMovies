@@ -20,7 +20,11 @@
         </activity>
         <activity
             android:name=".DetailsActivity"
-            android:label="@string/title_activity_details"></activity>
+            android:label="@string/title_activity_details">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iktwo.popularmovies.MainActivity" />
+        </activity>
 
         <meta-data
             android:name="com.iktwo.popularmovies.GlideConfiguration"
