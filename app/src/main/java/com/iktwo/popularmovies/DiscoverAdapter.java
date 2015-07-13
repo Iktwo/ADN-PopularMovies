@@ -10,10 +10,27 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class DiscoverAdapter extends ArrayAdapter<DiscoverResultMovie> {
     private static final String TAG = DiscoverAdapter.class.getSimpleName();
+
+    public static Comparator<DiscoverResultMovie> MostPopularComparator
+            = new Comparator<DiscoverResultMovie>() {
+
+        public int compare(DiscoverResultMovie movie1, DiscoverResultMovie movie2) {
+            return (int) (movie2.vote_count - movie1.vote_count);
+        }
+    };
+
+    public static Comparator<DiscoverResultMovie> HighestRatedComparator
+            = new Comparator<DiscoverResultMovie>() {
+
+        public int compare(DiscoverResultMovie movie1, DiscoverResultMovie movie2) {
+            return (int) (movie2.vote_average - movie1.vote_average);
+        }
+    };
 
     public DiscoverAdapter(Activity context, List<DiscoverResultMovie> movies) {
         super(context, 0, movies);
@@ -36,8 +53,7 @@ public class DiscoverAdapter extends ArrayAdapter<DiscoverResultMovie> {
         }
 
         if (item.poster_path != null) {
-            /// TODO: this is wrong, according to docs this could change, so we need to query api to get this url and cache it
-            String url = "http://image.tmdb.org/t/p/w780/" + item.poster_path;
+            String url = Urls.IMAGES_URL + item.poster_path;
 
             Glide.with(getContext())
                     .load(url)
@@ -52,6 +68,16 @@ public class DiscoverAdapter extends ArrayAdapter<DiscoverResultMovie> {
         }
 
         return convertView;
+    }
+
+    public void sortBy(String type) {
+        if (type.equals(getContext().getString(R.string.type_most_popular))) {
+            sort(MostPopularComparator);
+            notifyDataSetChanged();
+        } else if (type.equals(getContext().getString(R.string.type_highest_rated))) {
+            sort(HighestRatedComparator);
+            notifyDataSetChanged();
+        }
     }
 
     static class ViewHolder {

@@ -37,7 +37,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
             final DiscoverResultsMovies discoverResults = new Gson().fromJson(reply.get(1), DiscoverResultsMovies.class);
 
             mMovies = discoverResults.results;
-            gridView.setAdapter(new DiscoverAdapter(getActivity(), mMovies));
+            discoverAdapter = new DiscoverAdapter(getActivity(), mMovies);
+            gridView.setAdapter(discoverAdapter);
 
             busyIndicator.setVisibility(View.GONE);
         } else {
@@ -69,7 +70,8 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
         busyIndicator = (ProgressBar) view.findViewById(R.id.busy_indicator);
 
         if (mMovies != null) {
-            gridView.setAdapter(new DiscoverAdapter(getActivity(), mMovies));
+            discoverAdapter = new DiscoverAdapter(getActivity(), mMovies);
+            gridView.setAdapter(discoverAdapter);
             busyIndicator.setVisibility(View.GONE);
         }
 
@@ -104,6 +106,14 @@ public class DiscoverFragment extends Fragment implements HttpAsyncRequest.Async
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void sortBy(String type) {
+        if (type.equals(getString(R.string.type_most_popular))) {
+            discoverAdapter.sortBy(getString(R.string.type_most_popular));
+        } else if (type.equals(getString(R.string.type_highest_rated))) {
+            discoverAdapter.sortBy(getString(R.string.type_highest_rated));
+        }
     }
 
     public interface OnMovieSelectedListener {
